@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.driver.Driver;
 
+import java.time.Duration;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -31,7 +32,7 @@ public class Gutils
        }
 
         public static void waitForVisibility(String locator) {
-            WebDriverWait wait = new WebDriverWait(Driver.webDriver, 15);
+            WebDriverWait wait = new WebDriverWait(Driver.webDriver, Duration.ofSeconds(15));
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(locator)));
         }
 
@@ -58,7 +59,7 @@ public class Gutils
         }
 
         public static void waitUntilTextIsPresentOnElement(String locator, String expectedText) {
-            WebDriverWait wait = new WebDriverWait(Driver.webDriver, 15);
+            WebDriverWait wait = new WebDriverWait(Driver.webDriver, Duration.ofSeconds(15));
             String xpath = locator + "[contains(text(),'" + expectedText + "')]";
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
         }

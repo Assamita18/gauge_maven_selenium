@@ -3,75 +3,68 @@ import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import utils.driver.Driver;
 import utils.Gutils;
 import com.github.javafaker.Faker;
+import java.time.Duration;
 import java.util.Locale;
 
-
 public class CustomerSignIn {
+    private final WebDriverWait wait;
 
-
-
+    public CustomerSignIn() {
+        this.wait = new WebDriverWait(Driver.webDriver, Duration.ofSeconds(10));
+    }
 
     @Step("Sign in as <email> with password <password>")
-
     public void signInAs(String email, String password) {
-        WebDriver webDriver = Driver.webDriver;
-        WebElement userfield =  webDriver.findElement(By.xpath(System.getenv("loginpage_user")));
-
-        String locator;
+        WebElement userfield = wait.until(ExpectedConditions.visibilityOfElementLocated(
+            By.xpath(System.getenv("loginpage_user"))));
         userfield.sendKeys(email);
 
+        WebElement passwordField = wait.until(ExpectedConditions.visibilityOfElementLocated(
+            By.xpath(System.getenv("loginpage_password"))));
+        passwordField.sendKeys(password);
 
-        locator = System.getenv("loginpage_password");
-
-        webDriver.findElement(By.xpath(locator)).sendKeys(password);
-
-        locator = System. getenv("loginpage_loginbutton");
-
-        webDriver.findElement(By.xpath(locator)).click();
-
-
-
+        WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(
+            By.xpath(System.getenv("loginpage_loginbutton"))));
+        loginButton.click();
     }
 
     @Step("Verify that page title is <page>")
     public void checkPageTitle(String page) {
-        String actualTitle;
-        actualTitle = Gutils.getPageTitle();
+        wait.until(ExpectedConditions.titleIs(page));
+        String actualTitle = Gutils.getPageTitle();
         Assert.assertEquals(page, actualTitle);
-
     }
 
     @Step("Accept Login data")
-    public void acceptLogindata(){
-        String locator = System.getenv("loginpage_accept_button");
-        WebDriver webDriver = Driver.webDriver;
-        webDriver.findElement(By.xpath(locator)).click();
-
-
+    public void acceptLogindata() {
+        WebElement acceptButton = wait.until(ExpectedConditions.elementToBeClickable(
+            By.xpath(System.getenv("loginpage_accept_button"))));
+        acceptButton.click();
     }
 
     @Step("Verify that note module exists")
-    public void noteModuleExists(){
+    public void noteModuleExists() {
         String locator = System.getenv("mynotes_container");
-        Gutils.isElementVisible(locator);
-
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(locator)));
     }
 
     @Step("Verify that error message is visible")
-    public void errorMessageExists(){
+    public void errorMessageExists() {
         String locator = System.getenv("loginpage_error_message");
-        Gutils.isElementVisible(locator);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(locator)));
     }
 
     @Step("Verify that error message is <content>")
-    public void errorMessageExists(String content){
+    public void errorMessageExists(String content) {
         String locator = System.getenv("loginpage_error_message");
-        String actual = Gutils.elementTextis(locator);
+        WebElement errorElement = wait.until(ExpectedConditions.visibilityOfElementLocated(
+            By.xpath(locator)));
+        String actual = errorElement.getText();
         Assert.assertEquals(content, actual);
     }
-
-
 }
